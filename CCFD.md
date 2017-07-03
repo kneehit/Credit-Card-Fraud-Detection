@@ -80,16 +80,13 @@ library(ggplot2)
 ggplot(subset(CCdata,CCdata$Class == 1),aes(x = Time)) + geom_bar(stat = "count",binwidth =3000,col = "black",fill = "white") + scale_x_continuous(breaks = seq(0,170000,10000)) + theme(axis.text.x = element_text(angle = 40))
 ```
 
-    ## Warning: `geom_bar()` no longer has a `binwidth` parameter. Please use
-    ## `geom_histogram()` instead.
+![](CCFD_files/figure-markdown_github/unnamed-chunk-5-1.png) 
 
-![](CCFD_files/figure-markdown_github/unnamed-chunk-5-1.png) We observe 2 spikes at 40,000 and 90,000 units of time. If information about the units was available we would be able to find hours of day when most frauds take place.
+We observe 2 spikes at 40,000 and 90,000 units of time. If information about the units was available we would be able to find hours of day when most frauds take place.
 
 ``` r
 ggplot(subset(CCdata,CCdata$Class == 1),aes(x = Amount)) + geom_histogram(col = "black",fill = "darkgreen") + scale_x_continuous(breaks = seq(0,2250,200))
 ```
-
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
 ![](CCFD_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
@@ -217,7 +214,7 @@ table(OStrain$Class)
     ##      0      1 
     ## 199020 199414
 
-Originally we had 199020 non fraud and 344 fraud observations in train set.Lets see distribution in oversampled train
+Originally we had 199020 non fraud and 344 fraud observations in train set.Lets see distribution in oversampled train.
 
 ``` r
 table(OStrain$Class)
