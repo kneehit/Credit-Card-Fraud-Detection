@@ -720,4 +720,4 @@ Thus we get a very minute improvement over logistic regression model on SMOTE tr
 Closing Remarks
 ---------------
 <br />
-1] Random Forest wasn't used due to computational limitations. <br /> 2] KNN wasn't also used because it gave 'too many ties' error since many distances were equidistant. <br /> 3] Ensembling other models might give better results. <br /> 4] Anomaly detection approach can also be used to detect fraud transactions.
+1] Random Forest wasn't used due to computational limitations. <br /> 2] KNN wasn't also used because it gave 'too many ties' error since many data points were equidistant. <br /> 3] Ensembling other models might give better results. <br /> 4] Anomaly detection approach can also be used to detect fraud transactions.
