@@ -582,7 +582,6 @@ table(model_weights)
 
 Thus we can see that non fraud observations were assigned a weight of 0.5 while fraud observations were assigned weight of 289.77.
 
-Change this
 
 ``` r
 LRWeighted <- glm(Class~.,data = train,family = binomial,weights = model_weights)
@@ -627,7 +626,6 @@ modelper(DTpredweighted)
     ## $ROC
     ## Area under the curve (AUC): 0.942
 
-Change This.
 
 ``` r
 SVMweighted <- svm(Class~.,data = train,class.weights = c("0" = 0.5,"1" = 289.77),probability = TRUE)
@@ -655,29 +653,6 @@ Ensembling different models
 ===========================
 
 Lets try averaging different probabilities and then predict outcome.
-
-``` r
-predictions <- data.frame(LRpred,DTpred,SVMpred,LRpredOS,DTpredOS,SVMpredOS,LRpredUS,DTpredUS,SVMpredUS,LRpredROSE,DTpredROSE,SVMpredROSE,LRpredSMOTE,DTpredSMOTE,SVMpredSMOTE,lmwpred,DTpredweighted,SVMweightedpred,WApred)
-```
-
-``` r
-auc <- data.frame()
-for(i in 1:ncol(predictions)){
-  a <- modelper(predictions[,i])
-  #auc[i,1] <- colnames(predictions)[i]
-  auc[i,1] <- colnames(predictions)[i]
-  auc[i,2] <- a$ROC$auc
-  
-  for(j in 1:length(a$confumat$byClass)){
-    auc[i,j+2] <- a$confumat$byClass[j]
-  }
-}
-
-colnames(auc)[1] <- "PredictionName"
-colnames(auc)[2] <- "AUC"
-colnames(auc)[3:13] <- names(a$confumat$byClass)
-```
-
 Amongst all the models we have trained, we will select the models with highest auc.
 
 ``` r
@@ -741,4 +716,4 @@ Thus we get a very minute improvement over logistic regression model on SMOTE tr
 Closing Remarks
 ---------------
 <br />
-1\] Random Forest wasn't used due to computational limitations. <br /> 2\] KNN wasn't also used because it gave 'too many ties' error since many distances were equidistant. <br /> 3\] Ensembling other models might give better results. <br /> 4\] Anomaly detection approach can also be used to detect fraud transactions.
+1] Random Forest wasn't used due to computational limitations. <br /> 2] KNN wasn't also used because it gave 'too many ties' error since many distances were equidistant. <br /> 3] Ensembling other models might give better results. <br /> 4] Anomaly detection approach can also be used to detect fraud transactions.
