@@ -3,6 +3,8 @@ Credit Card Fraud Detection
 **Author:-** Nihit R. Save <br />
 **Date:-** 15th June 2017
 
+Dataset: https://www.kaggle.com/dalpozz/creditcardfraud
+
 
 Data Exploration
 ----------------
@@ -111,7 +113,7 @@ Data Modelling
 
 ### Model Evaluation Function
 
-If we use accuracy to evaluate model performance it will mislead us since predicting all observations as not fraud will result in 99.8% accuracy. Thus we will use:- Confusion Matrix - to help us understand correct and incorrect predictions. AUC - to
+If we use accuracy to evaluate model performance it will mislead us since predicting all observations as not fraud will result in 99.8% accuracy. Thus we will use Confusion Matrix and AUC ROC to see how our models are performing.
 
 ``` r
 library(ROSE)
@@ -386,11 +388,7 @@ SVM on undersampled data doesnt provide much improvement over previous models.
 Training models on ROSE dataset
 -------------------------------
 
-ROSE (Random Over Sampling Examples) package helps us to generate artificial data based on sampling methods and smoothed bootstrap approach.
-
-``` r
-bootstraping - https://www.thoughtco.com/what-is-bootstrapping-in-statistics-3126172
-```
+ROSE (Random Over Sampling Examples)  generates artificial data based on sampling methods and smoothed bootstrap approach.
 
 ``` r
 trainR <- ROSE(Class~.,data = train)
@@ -590,13 +588,13 @@ Thus we can see that non fraud observations were assigned a weight of 0.5 while 
 Change this
 
 ``` r
-lmw <- glm(Class~.,data = train,family = binomial,weights = model_weights)
-lmwprob <- predict(lmw,newdata = test,type = "response")
-lmwpred <- ifelse(lmwprob > 0.5,1,0)
+LRWeighted <- glm(Class~.,data = train,family = binomial,weights = model_weights)
+LRWeightedprob <- predict(LRWeighted,newdata = test,type = "response")
+LRWeightedpred <- ifelse(LRWeightedprob > 0.5,1,0)
 ```
 
 ``` r
-modelper(lmwpred)
+modelper(LRWeightedpred)
 ```
 
 ![](CCFD_files/figure-markdown_github/unnamed-chunk-52-1.png)
@@ -635,8 +633,7 @@ modelper(DTpredweighted)
 Change This.
 
 ``` r
-SVMweighted2 <- svm(Class~.,data = train,class.weights = c("0" = 0.5,"1" = 289.77),probability = TRUE)
-SVMweighted <- SVMweighted2
+SVMweighted <- svm(Class~.,data = train,class.weights = c("0" = 0.5,"1" = 289.77),probability = TRUE)
 SVMweightedpred <- predict(SVMweighted,newdata = test)
 ```
 
@@ -656,10 +653,6 @@ modelper(SVMweightedpred)
     ## Area under the curve (AUC): 0.877
 
 Both the models dont perform better than logistic regression model in classifying fraud observations.
-
-DT: type = "prob" LR: type = "response"
-
-Cost Matrix Anomaly Detection
 
 Ensembling different models
 ===========================
@@ -694,7 +687,7 @@ Amongst all the models we have trained, we will select the models with highest a
 probLR <- data.frame(LRprobSMOTE,LRprobOS,lmwprob)
 ```
 
-But first we must check the correlation of these probabilities so that the average we get is not same as that of a model.
+But first we must check the correlation of these probabilities so that the average probability we get is not same as that of a model.
 
 ``` r
 cor(probLR)
@@ -705,9 +698,8 @@ cor(probLR)
     ## LRprobOS      0.8724429 1.0000000 0.9998152
     ## lmwprob       0.8714001 0.9998152 1.0000000
 
-As we see all the models are highly correlated and ensembling them would result in same AUC.
+As we see all the models are highly correlated and ensembling them would result in same AUC as that of a model.
 
-remove this
 
 Lets select one logistic regression model and other models with high AUC.
 
@@ -751,39 +743,5 @@ Thus we get a very minute improvement over logistic regression model on SMOTE tr
 
 Closing Remarks
 ---------------
-
-1\] Random Forest wasn't used due to computational limitations. 2\] KNN wasn't also used because it gave 'too many ties' error. 3\] Ensembling other models might give better results 4\] Anomaly detection approach can also be used to detect fraud transactions.
-
-Fraudulent transaction detector (positive class is "fraud"): Optimize for sensitivity FN as a variable Because false positives (normal transactions that are flagged as possible fraud) are more acceptable than false negatives (fraudulent transactions that are not detected)
-
-------------------------------------------------------------------------
-
-Original KNN combine train and test then scale
-
-x
-
-``` r
-LRprobUS <- predict(LRmodelUS,type = "response",newdata = test)
-
-DTprobUS <- as.data.frame(predict(DTmodelUS,type = "prob",newdata = test))
-SVMprobUS <- predict(SVMmodelUS,probability = T,newdata = test)
-SVMprob <- as.data.frame(attr(SVMprobUS, "prob"))
-SVMprobdummmy <- as.data.frame(SVMprob )
-
-
-prob <- data.frame(LRprobUS,DTprobUS$`1`,SVMprobdummmy$`1`) #as.data.frame
-```
-
-``` r
-cor(prob)
-```
-
-    ##                   LRprobSMOTE DTprobUS..1. SVMprobdummmy..1.
-    ## LRprobSMOTE         1.0000000    0.4268415         0.6162950
-    ## DTprobUS..1.        0.4268415    1.0000000         0.4779392
-    ## SVMprobdummmy..1.   0.6162950    0.4779392         1.0000000
-
-``` r
-WAprob <- (prob$LRprobUS*0.4) + (prob$DTprobUS..1.*0.3) + (prob$SVMprobdummmy..1.*0.3)
-WApred <- ifelse(WAprob > 0.5,1,0)
-```
+<br />
+1\] Random Forest wasn't used due to computational limitations. <br /> 2\] KNN wasn't also used because it gave 'too many ties' error since many distances were equidistant. <br /> 3\] Ensembling other models might give better results. <br /> 4\] Anomaly detection approach can also be used to detect fraud transactions.
